@@ -1,0 +1,1 @@
+// empty file to fix eslint vscode import error for custom plataform component
