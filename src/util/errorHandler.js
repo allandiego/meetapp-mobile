@@ -1,4 +1,13 @@
-export const getError = err => {
+// import NetInfo from '@react-native-community/netinfo';
+
+export const getError = async err => {
+  // const { isConnected } = await NetInfo.fetch();
+  // // const { isConnected } = await NetInfo.isConnected.fetch();
+
+  // if (isConnected) {
+  //   return 'Verifique sua conexão';
+  // }
+
   if (!err || !err.response || !err.response.data || !err.response.data.error)
     return 'Erro Interno';
 
