@@ -1,10 +1,10 @@
 import { call, put, all, takeLatest } from 'redux-saga/effects';
+import { NavigationActions } from 'react-navigation';
 
 import { getError } from '~/util/errorHandler';
 import AlertHelper from '~/components/AlertHelper';
 
 import api from '~/services/api';
-import * as NavigationService from '~/services/navigation';
 
 import { signInSuccess, signFailure, signUpSuccess } from './actions';
 
@@ -39,7 +39,7 @@ export function* signUp({ payload }) {
 
     yield put(signUpSuccess());
     AlertHelper.show('success', 'Sucesso!', 'Cadastro realizado com sucesso');
-    NavigationService.navigate('Sign');
+    // yield put(NavigationActions.navigate({ "routeName": "SignIn" });
   } catch (err) {
     AlertHelper.show('error', 'Erro', getError(err));
 
