@@ -5,57 +5,79 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import api from '~/services/api';
 
-import Backgrond from '~/components/Background';
-import Appointment from '~/components/Appointment';
+import Background from '~/components/Background';
+import Loading from '~/components/Loading';
+import Header from '~/components/Header';
+import Meetup from '~/components/Meetup';
 
-import { Container, Title, List } from './styles';
+import { Container, List } from './styles';
 
 function Dashboard({ isFocused }) {
-  const [appointments, setAppointments] = useState([]);
-
-  async function loadAppointments() {
-    const response = await api.get('appointments');
-    setAppointments(response.data);
-  }
+  const [meetups, setMeetups] = useState([]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (isFocused) {
-      loadAppointments();
+    async function loadMeetups() {
+      setLoading(true);
+      const response = await api.get(`meetups?page=${page}`);
+      // const teste = response.data;
+
+      // const data = {
+      //   ...meetups,
+      //   teste,
+      // };
+      // console.tron.log(data);
+      setMeetups(response.data);
+
+      setLoading(false);
     }
-  }, [isFocused]);
 
-  // useEffect(() => {
-  //   loadAppointments();
-  // }, [appointments]);
+    if (isFocused) {
+      loadMeetups();
+    }
+  }, [isFocused, page]);
 
-  async function handleCancel(id) {
-    const response = await api.delete(`appointments/${id}`);
-
-    setAppointments(
-      appointments.map(appointment =>
-        appointment.id === id
-          ? {
-              ...appointment,
-              canceled_at: response.data.canceled_at,
-            }
-          : appointment
-      )
-    );
+  async function handleSubscribe(id) {
+    console.tron.log(`Inscrito em ${id}`);
+    // const response = await api.delete(`appointments/${id}`);
+    // setAppointments(
+    //   meetups.map(appointment =>
+    //     meetup.id === id
+    //       ? {
+    //           ...meetup,
+    //           canceled_at: response.data.canceled_at,
+    //         }
+    //       : appointment
+    //   )
+    // );
   }
 
   return (
-    <Backgrond>
-      <Container>
-        <Title>Agendamentos</Title>
-        <List
-          data={appointments}
-          keyExtractor={item => String(item.id)}
-          renderItem={({ item }) => (
-            <Appointment onCancel={() => handleCancel(item.id)} data={item} />
-          )}
-        />
-      </Container>
-    </Backgrond>
+    <Background>
+      {loading ? (
+        <Loading size="large" />
+      ) : (
+        <Container>
+          <Header />
+          <List
+            data={meetups}
+            keyExtractor={item => String(item.id)}
+            renderItem={({ item }) => (
+              <Meetup
+                onSubscribe={() => handleSubscribe(item.id)}
+                data={item}
+              />
+            )}
+            onEndReachedThreshold={0.8} // (item position to load / total itens)
+            onEndReached={({ distanceFromEnd }) => {
+              // setPage(page + 1);
+              console.tron.log(`on end reached ${page}`, distanceFromEnd);
+            }}
+          />
+        </Container>
+      )}
+    </Background>
   );
 }
 
@@ -66,7 +88,7 @@ Dashboard.propTypes = {
 Dashboard.navigationOptions = {
   tabBarLabel: 'Meetups',
   tabBarIcon: ({ tintColor }) => (
-    <Icon name="format-list-bulleted" size={20} color={tintColor} />
+    <Icon name="format-list-bulleted" size={30} color={tintColor} />
   ),
 };
 

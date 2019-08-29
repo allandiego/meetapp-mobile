@@ -1,11 +1,11 @@
 // import NetInfo from '@react-native-community/netinfo';
 
-export const getError = async err => {
+export const getError = err => {
   // const { isConnected } = await NetInfo.fetch();
-  // // const { isConnected } = await NetInfo.isConnected.fetch();
+  // const isConnected = await NetInfo.isConnected.fetch();
 
   // if (isConnected) {
-  //   return 'Verifique sua conexão';
+  //   return 'Você está offline, verifique sua conexão';
   // }
 
   if (!err || !err.response || !err.response.data || !err.response.data.error)
@@ -14,7 +14,7 @@ export const getError = async err => {
   const { error } = err.response.data;
 
   if (error.user_msg) {
-    return err.response.data.error.user_msg;
+    return error.user_msg;
   }
 
   switch (typeof error) {
@@ -23,7 +23,7 @@ export const getError = async err => {
     default: {
       if (error.length && error.length > 0) return error[0];
 
-      return 'Erro Interno';
+      return false;
     }
   }
 };

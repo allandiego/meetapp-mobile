@@ -54,7 +54,7 @@ export default (isSigned = false) =>
                 tabBarIcon: (
                   <Icon
                     name="insert-link"
-                    size={20}
+                    size={30}
                     color="rgba(255, 255, 255, 0.6)"
                   />
                 ),
@@ -65,7 +65,7 @@ export default (isSigned = false) =>
           {
             // swipeEnabled: false,
             // animationEnabled: true,
-            // voltar para rota inicial apos sair dela exemplo confirmar agendamento
+            // voltar para rota inicial apos sair da rota atual ex agendamento
             resetOnBlur: true,
             tabBarOptions: {
               scrollEnabled: true,
@@ -75,29 +75,13 @@ export default (isSigned = false) =>
               // 'tabBarComponent': TabView.TabBarTop,
               style: {
                 backgroundColor: '#2b1a2f',
+                // shadowColor: 'transparent',
+                // borderTopColor: 'transparent',
+                // borderTopWidth: 0,
               },
             },
           }
         ),
-
-        // AppStack: createStackNavigator(
-        //   {
-        //     Dashboard,
-        //   },
-        //   {
-        //     headerLayoutPreset: 'center',
-        //     headerBackTitleVisible: false,
-        //     defaultNavigationOptions: {
-        //       headerStyle: {
-        //         // backgroundColor: '#7159c1',
-        //         backgroundColor: '#59c171',
-        //         // backgroundColor: 'transparent',
-        //         // borderBottomWidth: 0 // removes the border on the bottom
-        //       },
-        //       headerTintColor: '#FFF',
-        //     },
-        //   }
-        // ),
       },
       {
         initialRouteName: isSigned ? 'App' : 'Sign',

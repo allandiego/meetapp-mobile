@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 import { signInRequest } from '~/store/Modules/auth/actions';
 
-import Backgrond from '~/components/Background';
+import Background from '~/components/Background';
 
 import logo from '~/assets/logo.png';
 
@@ -33,7 +33,7 @@ export default function SignIn({ navigation }) {
   }
 
   return (
-    <Backgrond>
+    <Background>
       <Container>
         <Image source={logo} />
         <Form>
@@ -70,7 +70,7 @@ export default function SignIn({ navigation }) {
           <SignLinkText>Criar conta grátis</SignLinkText>
         </SignLink>
       </Container>
-    </Backgrond>
+    </Background>
   );
 }
 

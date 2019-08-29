@@ -23,7 +23,7 @@ export default function Index() {
           <StatusBar
             barStyle="light-content"
             background
-            backgroundColor="#25212e"
+            backgroundColor="#19161f"
           />
           <App />
           {/* <DropdownAlert

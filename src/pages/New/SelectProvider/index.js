@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import api from '~/services/api';
 
-import Backgrond from '~/components/Background';
+import Background from '~/components/Background';
 
 import { Container, ProvidersList, Provider, Avatar, Name } from './styles';
 
@@ -23,7 +23,7 @@ export default function SelectProvider({ navigation }) {
   }, []);
 
   return (
-    <Backgrond>
+    <Background>
       <Container>
         <ProvidersList
           data={providers}
@@ -46,7 +46,7 @@ export default function SelectProvider({ navigation }) {
           )}
         />
       </Container>
-    </Backgrond>
+    </Background>
   );
 }
 

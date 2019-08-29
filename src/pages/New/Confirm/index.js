@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import api from '~/services/api';
 
-import Backgrond from '~/components/Background';
+import Background from '~/components/Background';
 
 import { Container, Avatar, Name, Time, SubmitButton } from './styles';
 
@@ -30,7 +30,7 @@ export default function Confirm({ navigation }) {
   }
 
   return (
-    <Backgrond>
+    <Background>
       <Container>
         <Avatar
           source={{
@@ -47,7 +47,7 @@ export default function Confirm({ navigation }) {
           Confirmar Agendamento
         </SubmitButton>
       </Container>
-    </Backgrond>
+    </Background>
   );
 }
 

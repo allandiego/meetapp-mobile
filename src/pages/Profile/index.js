@@ -1,15 +1,16 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import { updateProfileRequest } from '~/store/Modules/user/actions';
 import { signOut } from '~/store/Modules/auth/actions';
 
-import Backgrond from '~/components/Background';
+import Background from '~/components/Background';
+import Header from '~/components/Header';
 
 import {
   Container,
-  Title,
   Form,
   FormInput,
   SubmitButton,
@@ -24,9 +25,9 @@ export default function Profile() {
 
   const [name, setName] = useState(profile.name);
   const [email, setEmail] = useState(profile.email);
-  const [oldPassword, setOldPassword] = useState('');
+  const [old_password, setOldPassword] = useState('');
   const [password, setPassword] = useState('');
-  const [passwordConfirmation, setPasswordConfirmation] = useState('');
+  const [password_confirmation, setPasswordConfirmation] = useState('');
 
   const emailRef = useRef();
   const oldPasswordRef = useRef();
@@ -44,9 +45,9 @@ export default function Profile() {
       updateProfileRequest({
         name,
         email,
-        oldPassword,
+        old_password,
         password,
-        passwordConfirmation,
+        password_confirmation,
       })
     );
   }
@@ -56,9 +57,9 @@ export default function Profile() {
   }
 
   return (
-    <Backgrond>
+    <Background>
+      <Header />
       <Container>
-        <Title>Perfil</Title>
         <Form>
           <FormInput
             placeholder="Seu nome completo"
@@ -95,7 +96,7 @@ export default function Profile() {
             ref={oldPasswordRef}
             returnKeyType="next"
             onSubmitEditing={() => passwordRef.current.focus()}
-            value={oldPassword}
+            value={old_password}
             onChangeText={setOldPassword}
           />
 
@@ -119,26 +120,34 @@ export default function Profile() {
             ref={passwordConfirmationRef}
             returnKeyType="send"
             onSubmitEditing={handleSubmit}
-            value={passwordConfirmation}
+            value={password_confirmation}
             onChangeText={setPasswordConfirmation}
           />
 
           <SubmitButton loading={loading} onPress={handleSubmit}>
-            Atualizar Perfil
+            Salvar Perfil
           </SubmitButton>
 
           <LogoutButton loading={loading} onPress={handleLogout}>
-            Sair
+            Sair do MeetApp
           </LogoutButton>
         </Form>
       </Container>
-    </Backgrond>
+    </Background>
   );
 }
 
-Profile.navigationOptions = {
+Profile.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func,
+  }).isRequired,
+};
+
+Profile.navigationOptions = ({ navigation }) => ({
+  // title: 'Perfil',
+  // header: { visible: false },
   tabBarLabel: 'Meu Perfil',
   tabBarIcon: ({ tintColor }) => (
-    <Icon name="person" size={20} color={tintColor} />
+    <Icon name="person" size={30} color={tintColor} />
   ),
-};
+});

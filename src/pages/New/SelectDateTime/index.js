@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import api from '~/services/api';
 
-import Backgrond from '~/components/Background';
+import Background from '~/components/Background';
 import DateInput from '~/components/DateInput';
 
 import { Container, HourList, Hour, Title } from './styles';
@@ -36,7 +36,7 @@ export default function SelectDateTime({ navigation }) {
   }
 
   return (
-    <Backgrond>
+    <Background>
       <Container>
         <DateInput date={date} onChange={setDate} />
 
@@ -53,7 +53,7 @@ export default function SelectDateTime({ navigation }) {
           )}
         />
       </Container>
-    </Backgrond>
+    </Background>
   );
 }
 
