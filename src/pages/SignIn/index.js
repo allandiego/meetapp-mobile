@@ -54,6 +54,7 @@ export default function SignIn({ navigation }) {
             placeholder="Sua senha secreta"
             icon="lock-outline"
             secureTextEntry
+            autoCapitalize="none"
             ref={passwordRef}
             returnKeyType="send"
             onSubmitEditing={handleSubmit}

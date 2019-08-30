@@ -41,16 +41,16 @@ function Dashboard({ isFocused }) {
   );
 
   async function loadMeetups(selectedPage = 1) {
-    console.tron.log(
-      `selectedPage ${selectedPage} - date: ${date} - isListEnd ${isListEnd}`
-    );
+    // console.tron.log(
+    //   `loadMeetups: selectedPage ${selectedPage} - date: ${date} - isListEnd ${isListEnd}`
+    // );
 
     if (selectedPage > 1 && isListEnd) return;
 
     try {
       const response = await api.get('meetups', {
         params: {
-          // date,
+          date,
           page: selectedPage,
         },
       });
@@ -58,10 +58,9 @@ function Dashboard({ isFocused }) {
       if (response.data.length === 0) {
         setIsListEnd(true);
       }
-      console.tron.log(`page ${selectedPage}`);
+
       const data =
         selectedPage > 1 ? [...meetups, ...response.data] : response.data;
-      console.tron.log(data);
 
       setPage(selectedPage);
       setMeetups(data);

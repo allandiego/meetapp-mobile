@@ -10,6 +10,7 @@ export const Container = styled.View`
   display: flex;
   flex: 1;
   align-items: center;
+  overflow: hidden;
 `;
 
 export const Header = styled.View`
@@ -26,6 +27,14 @@ export const BannerImage = styled.Image`
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
 `;
+
+// export const BannerImage = styled.Image.attrs({
+//   resizeMode: 'cover',
+// })`
+//   width: 100%;
+//   height: 140px;
+//   align-content: stretch;
+// `;
 
 export const Info = styled.View`
   padding: 10px;

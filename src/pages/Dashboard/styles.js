@@ -21,6 +21,7 @@ export const DateText = styled.Text`
 
 export const List = styled.FlatList.attrs({
   showsVerticalScrollIndicator: false,
+  contentContainerStyle: { padding: 15 },
 })``;
 
 export const NoResultsContainer = styled.View`
