@@ -21,9 +21,7 @@ export const Header = styled.View`
 `;
 
 export const BannerImage = styled.Image`
-  flex-wrap: wrap;
   align-self: stretch;
-  /* transform: scale(0.55); */
   flex: 1;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
