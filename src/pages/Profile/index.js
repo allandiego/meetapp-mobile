@@ -8,6 +8,7 @@ import { signOut } from '~/store/Modules/auth/actions';
 
 import Background from '~/components/Background';
 import Header from '~/components/Header';
+import Loading from '~/components/Loading';
 
 import {
   Container,
@@ -59,80 +60,84 @@ export default function Profile() {
   return (
     <Background>
       <Header />
-      <Container>
-        <Form>
-          <FormInput
-            placeholder="Seu nome completo"
-            icon="person-outline"
-            autoCorrect={false}
-            blurOnSubmit={false}
-            returnKeyType="next"
-            onSubmitEditing={() => emailRef.current.focus()}
-            value={name}
-            onChangeText={setName}
-          />
+      {!loading ? (
+        <Container>
+          <Form>
+            <FormInput
+              placeholder="Seu nome completo"
+              icon="person-outline"
+              autoCorrect={false}
+              blurOnSubmit={false}
+              returnKeyType="next"
+              onSubmitEditing={() => emailRef.current.focus()}
+              value={name}
+              onChangeText={setName}
+            />
 
-          <FormInput
-            placeholder="Digite seu e-mail"
-            icon="mail-outline"
-            keyboardType="email-address"
-            autoCorrect={false}
-            blurOnSubmit={false}
-            autoCapitalize="none"
-            ref={emailRef}
-            returnKeyType="next"
-            onSubmitEditing={() => oldPasswordRef.current.focus()}
-            value={email}
-            onChangeText={setEmail}
-          />
+            <FormInput
+              placeholder="Digite seu e-mail"
+              icon="mail-outline"
+              keyboardType="email-address"
+              autoCorrect={false}
+              blurOnSubmit={false}
+              autoCapitalize="none"
+              ref={emailRef}
+              returnKeyType="next"
+              onSubmitEditing={() => oldPasswordRef.current.focus()}
+              value={email}
+              onChangeText={setEmail}
+            />
 
-          <Separator />
+            <Separator />
 
-          <FormInput
-            placeholder="Sua senha atual"
-            icon="lock-outline"
-            blurOnSubmit={false}
-            secureTextEntry
-            ref={oldPasswordRef}
-            returnKeyType="next"
-            onSubmitEditing={() => passwordRef.current.focus()}
-            value={old_password}
-            onChangeText={setOldPassword}
-          />
+            <FormInput
+              placeholder="Sua senha atual"
+              icon="lock-outline"
+              blurOnSubmit={false}
+              secureTextEntry
+              ref={oldPasswordRef}
+              returnKeyType="next"
+              onSubmitEditing={() => passwordRef.current.focus()}
+              value={old_password}
+              onChangeText={setOldPassword}
+            />
 
-          <FormInput
-            placeholder="Sua nova senha"
-            icon="lock-outline"
-            blurOnSubmit={false}
-            secureTextEntry
-            ref={passwordRef}
-            returnKeyType="next"
-            onSubmitEditing={() => passwordConfirmationRef.current.focus()}
-            value={password}
-            onChangeText={setPassword}
-          />
+            <FormInput
+              placeholder="Sua nova senha"
+              icon="lock-outline"
+              blurOnSubmit={false}
+              secureTextEntry
+              ref={passwordRef}
+              returnKeyType="next"
+              onSubmitEditing={() => passwordConfirmationRef.current.focus()}
+              value={password}
+              onChangeText={setPassword}
+            />
 
-          <FormInput
-            placeholder="Confirme sua nova senha"
-            icon="lock-outline"
-            blurOnSubmit={false}
-            secureTextEntry
-            ref={passwordConfirmationRef}
-            returnKeyType="send"
-            onSubmitEditing={handleSubmit}
-            value={password_confirmation}
-            onChangeText={setPasswordConfirmation}
-          />
+            <FormInput
+              placeholder="Confirme sua nova senha"
+              icon="lock-outline"
+              blurOnSubmit={false}
+              secureTextEntry
+              ref={passwordConfirmationRef}
+              returnKeyType="send"
+              onSubmitEditing={handleSubmit}
+              value={password_confirmation}
+              onChangeText={setPasswordConfirmation}
+            />
 
-          <SubmitButton loading={loading} onPress={handleSubmit}>
-            Salvar Perfil
-          </SubmitButton>
+            <SubmitButton loading={loading} onPress={handleSubmit}>
+              Salvar Perfil
+            </SubmitButton>
 
-          <LogoutButton loading={loading} onPress={handleLogout}>
-            Sair do MeetApp
-          </LogoutButton>
-        </Form>
-      </Container>
+            <LogoutButton loading={loading} onPress={handleLogout}>
+              Sair do MeetApp
+            </LogoutButton>
+          </Form>
+        </Container>
+      ) : (
+        <Loading />
+      )}
     </Background>
   );
 }

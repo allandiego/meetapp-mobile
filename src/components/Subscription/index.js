@@ -15,41 +15,46 @@ import {
   InfoItem,
 } from './styles';
 
-export default function Meetup({ data, onButtonClick }) {
+export default function Subscription({ data, onButtonClick }) {
   const dateParsed = useMemo(() => {
-    return format(parseISO(data.date), "dd 'de' MMMM 'de' yyyy', às' HH:mm", {
-      locale: pt,
-    });
-  }, [data.date]);
+    return format(
+      parseISO(data.Meetup.date),
+      "dd 'de' MMMM 'de' yyyy', às' HH:mm",
+      {
+        locale: pt,
+      }
+    );
+  }, [data.Meetup.date]);
 
   return (
-    <Container past={data.past}>
+    <Container past={data.Meetup.past}>
       <Header>
-        {/* resizeMode="cover | contain" */}
-        <BannerImage source={{ uri: data.file.url }} />
+        <BannerImage source={{ uri: data.Meetup.file.url }} />
       </Header>
 
       <Info>
-        <Title past={data.past}>{data.title}</Title>
+        <Title past={data.Meetup.past}>{data.Meetup.title}</Title>
 
         <InfoItem>
           <Icon name="event" size={20} color="#999" />
-          <InfoText past={data.past}>{dateParsed}</InfoText>
+          <InfoText past={data.Meetup.past}>{dateParsed}</InfoText>
         </InfoItem>
 
         <InfoItem>
           <Icon name="location-on" size={20} color="#999" />
-          <InfoText past={data.past}>{data.location}</InfoText>
+          <InfoText past={data.Meetup.past}>{data.Meetup.location}</InfoText>
         </InfoItem>
 
         <InfoItem>
           <Icon name="person" size={20} color="#999" />
-          <InfoText past={data.past}>Organizador: {data.owner.name}</InfoText>
+          <InfoText past={data.Meetup.past}>
+            Organizador: {data.Meetup.owner.name}
+          </InfoText>
         </InfoItem>
 
         {!data.past && (
           <SubscribeButton onPress={onButtonClick}>
-            Realizar inscrição
+            Cancelar inscrição
           </SubscribeButton>
         )}
       </Info>
@@ -57,7 +62,7 @@ export default function Meetup({ data, onButtonClick }) {
   );
 }
 
-Meetup.propTypes = {
+Subscription.propTypes = {
   data: PropTypes.instanceOf(Object).isRequired,
   onButtonClick: PropTypes.func.isRequired,
 };

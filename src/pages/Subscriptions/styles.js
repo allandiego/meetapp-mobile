@@ -2,7 +2,7 @@ import styled from 'styled-components/native';
 import { Platform, StatusBar } from 'react-native';
 
 export const Container = styled.View.attrs({
-  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+  // paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
 })`
   flex: 1;
 `;
@@ -30,10 +30,8 @@ export const DateText = styled.Text`
 
 export const List = styled.FlatList.attrs({
   showsVerticalScrollIndicator: false,
-  contentContainerStyle: { padding: 20 },
-})`
-  margin-top: 20px;
-`;
+  contentContainerStyle: { padding: 15 },
+})``;
 
 export const NoResultsContainer = styled.View`
   flex: 1;

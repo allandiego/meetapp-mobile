@@ -7,6 +7,9 @@ export const getError = err => {
   // if (isConnected) {
   //   return 'Você está offline, verifique sua conexão';
   // }
+  if (__DEV__) {
+    console.tron.log(err);
+  }
 
   if (!err || !err.response || !err.response.data || !err.response.data.error)
     return 'Erro Interno';
@@ -23,7 +26,7 @@ export const getError = err => {
     default: {
       if (error.length && error.length > 0) return error[0];
 
-      return false;
+      return 'Erro Interno';
     }
   }
 };

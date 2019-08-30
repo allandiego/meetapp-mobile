@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { ActivityIndicator, View, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
+import { withNavigationFocus } from 'react-navigation';
+import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { format, subDays, addDays } from 'date-fns';
 import pt from 'date-fns/locale/pt-BR';
@@ -11,8 +13,8 @@ import api from '~/services/api';
 import NavigationService from '~/services/navigation';
 
 import Background from '~/components/Background';
-// import Loading from '~/components/Loading';
 import Header from '~/components/Header';
+import Loading from '~/components/Loading';
 import Meetup from '~/components/Meetup';
 
 import {
@@ -24,12 +26,13 @@ import {
   NoResultsText,
 } from './styles';
 
-export default function Dashboard() {
+function Dashboard({ isFocused }) {
   const [meetups, setMeetups] = useState([]);
   const [date, setDate] = useState(new Date());
 
   const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(true);
   const [isListEnd, setIsListEnd] = useState(false);
 
   const dateFormatted = useMemo(
@@ -37,71 +40,88 @@ export default function Dashboard() {
     [date]
   );
 
-  async function loadMeetups() {
-    console.tron.log(`page ${page} - ${date}`);
-    if (loading) return;
+  async function loadMeetups(selectedPage = 1) {
+    console.tron.log(
+      `selectedPage ${selectedPage} - date: ${date} - isListEnd ${isListEnd}`
+    );
 
-    setLoading(true);
-    const response = await api.get('meetups', {
-      params: {
-        // date,
-        page,
-      },
-    });
+    if (selectedPage > 1 && isListEnd) return;
 
-    if (response.data.length === 0) {
-      setIsListEnd(true);
+    try {
+      const response = await api.get('meetups', {
+        params: {
+          // date,
+          page: selectedPage,
+        },
+      });
+
+      if (response.data.length === 0) {
+        setIsListEnd(true);
+      }
+      console.tron.log(`page ${selectedPage}`);
+      const data =
+        selectedPage > 1 ? [...meetups, ...response.data] : response.data;
+      console.tron.log(data);
+
+      setPage(selectedPage);
+      setMeetups(data);
+      setLoading(false);
+    } catch (err) {
+      AlertHelper.show('error', 'Erro', getError(err));
     }
-
-    const data = page !== 1 ? [...meetups, ...response.data] : response.data;
-
-    console.tron.log(data);
-    setMeetups(data);
-    setLoading(false);
   }
 
   useEffect(() => {
-    loadMeetups();
-  }, [date]); // eslint-disable-line
+    if (isFocused) {
+      setLoading(true);
+      setRefreshing(true);
+      loadMeetups();
+      setRefreshing(false);
+    }
+  }, [isFocused, date]); // eslint-disable-line
 
   function handlePrevDay() {
     setDate(subDays(date, 1));
-    setPage(1);
   }
 
   function handleNextDay() {
     setDate(addDays(date, 1));
-    setPage(1);
   }
 
-  function handleLoadMore() {
-    if (!isListEnd) {
-      setPage(page + 1);
-      loadMeetups();
-    }
+  function handleRefresh() {
+    setRefreshing(true);
+    setIsListEnd(false);
+    loadMeetups();
+    setRefreshing(false);
   }
 
   async function handleSubscribe(meetup_id) {
     try {
       await api.post('subscriptions', { meetup_id });
 
-      AlertHelper.show(
-        'success',
-        'Sucesso!',
-        'Inscrição realizada com sucesso'
-      );
+      AlertHelper.show('info', 'Sucesso!', 'Inscrição realizada com sucesso');
       NavigationService.navigate('Subscriptions');
     } catch (err) {
       AlertHelper.show('error', 'Erro', getError(err));
     }
   }
 
-  function renderFooter() {
-    return loading ? (
-      <View>
-        <ActivityIndicator />
-      </View>
-    ) : null;
+  function renderItem({ item }) {
+    return (
+      <Meetup onButtonClick={() => handleSubscribe(item.id)} data={item} />
+    );
+  }
+
+  function renderListFooter() {
+    return loading && <Loading />;
+  }
+
+  function renderListEmpty() {
+    return (
+      <NoResultsContainer>
+        <NoResultsText>Nenhum evento disponível</NoResultsText>
+      </NoResultsContainer>
+    );
   }
 
   return (
@@ -119,29 +139,31 @@ export default function Dashboard() {
             <Icon name="chevron-right" size={40} color="#fff" />
           </TouchableOpacity>
         </DateNav>
-        {meetups.length > 0 ? (
-          <List
-            data={meetups}
-            keyExtractor={item => String(item.id)}
-            renderItem={({ item }) => (
-              <Meetup
-                onButtonClick={() => handleSubscribe(item.id)}
-                data={item}
-              />
-            )}
-            onEndReachedThreshold={0.5} // (item position to load / total itens)
-            onEndReached={handleLoadMore}
-            ListFooterComponent={renderFooter}
-          />
-        ) : (
-          <NoResultsContainer>
-            <NoResultsText>Nenhum evento nesta data</NoResultsText>
-          </NoResultsContainer>
+
+        {/* {loading && <Loading size="large" />} */}
+        {!loading && (
+          <>
+            <List
+              data={meetups}
+              keyExtractor={item => String(item.id)}
+              renderItem={renderItem}
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              onEndReachedThreshold={0.01}
+              onEndReached={() => loadMeetups(page + 1)}
+              ListFooterComponent={renderListFooter}
+              ListEmptyComponent={renderListEmpty}
+            />
+          </>
         )}
       </Container>
     </Background>
   );
 }
+
+Dashboard.propTypes = {
+  isFocused: PropTypes.bool.isRequired,
+};
 
 Dashboard.navigationOptions = {
   tabBarLabel: 'Meetups',
@@ -149,3 +171,5 @@ Dashboard.navigationOptions = {
     <Icon name="format-list-bulleted" size={30} color={tintColor} />
   ),
 };
+
+export default withNavigationFocus(Dashboard);

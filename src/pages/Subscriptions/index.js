@@ -1,104 +1,80 @@
 import React, { useState, useEffect } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { withNavigationFocus } from 'react-navigation';
+import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { format } from 'date-fns';
-import pt from 'date-fns/locale/pt-BR';
 
 import { getError } from '~/util/errorHandler';
 import AlertHelper from '~/components/AlertHelper';
 
 import api from '~/services/api';
-import NavigationService from '~/services/navigation';
 
 import Background from '~/components/Background';
-import Loading from '~/components/Loading';
 import Header from '~/components/Header';
-import Meetup from '~/components/Meetup';
+import Subscription from '~/components/Subscription';
 
 import { Container, List, NoResultsContainer, NoResultsText } from './styles';
 
-export default function Subscriptions() {
+function Subscriptions({ isFocused }) {
   const [subscriptions, setSubscriptions] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [isListEnd, setIsListEnd] = useState(false);
-
-  useEffect(() => {
-    async function loadSubscriptions() {
-      if (loading) return;
-
+  async function loadSubscriptions() {
+    try {
       setLoading(true);
-      const response = await api.get('subscriptions', {
-        params: {
-          page,
-        },
-      });
-
-      if (response.data.length === 0) {
-        setIsListEnd(true);
-      }
-
-      const data =
-        page !== 1 ? [...subscriptions, ...response.data] : response.data;
-
-      setSubscriptions(data);
+      const response = await api.get('subscriptions');
+      setSubscriptions(response.data);
+    } catch (err) {
+      AlertHelper.show('error', 'Erro', getError(err));
+    } finally {
       setLoading(false);
-    }
-
-    loadSubscriptions();
-  }, [loading, page, subscriptions]);
-
-  function handleLoadMore() {
-    if (!isListEnd) {
-      setPage(page + 1);
     }
   }
 
-  async function handleCancel(meetup_id) {
-    try {
-      await api.delete('subscriptions', { meetup_id });
+  useEffect(() => {
+    if (isFocused) {
+      loadSubscriptions();
+    }
+  }, [isFocused]); // eslint-disable-line
 
-      AlertHelper.show(
-        'success',
-        'Sucesso!',
-        'Inscrição cancelada com sucesso'
-      );
-      NavigationService.navigate('Subscriptions');
+  async function handleCancel(subscription_id) {
+    try {
+      await api.delete(`subscriptions/${subscription_id}`);
+
+      AlertHelper.show('warn', 'Sucesso!', 'Inscrição cancelada com sucesso');
+      loadSubscriptions();
     } catch (err) {
       AlertHelper.show('error', 'Erro', getError(err));
     }
   }
 
-  function renderFooter() {
-    return loading ? (
-      <View>
-        <ActivityIndicator />
-      </View>
-    ) : null;
+  function renderListEmpty() {
+    return (
+      <NoResultsContainer>
+        <NoResultsText>Nenhuma inscrição disponível</NoResultsText>
+      </NoResultsContainer>
+    );
   }
 
   return (
     <Background>
       <Header />
-      <Container>
-        {subscriptions.length > 0 ? (
+      {!loading && (
+        <Container>
           <List
             data={subscriptions}
             keyExtractor={item => String(item.id)}
             renderItem={({ item }) => (
-              <Meetup onButtonClick={() => handleCancel(item.id)} data={item} />
+              <Subscription
+                onButtonClick={() => handleCancel(item.id)}
+                data={item}
+              />
             )}
-            onEndReachedThreshold={0.5} // (item position to load / total itens)
-            onEndReached={handleLoadMore}
-            ListFooterComponent={renderFooter}
+            refreshing={loading}
+            onRefresh={loadSubscriptions}
+            ListEmptyComponent={renderListEmpty}
           />
-        ) : (
-          <NoResultsContainer>
-            <NoResultsText>Nenhum registro</NoResultsText>
-          </NoResultsContainer>
-        )}
-      </Container>
+        </Container>
+      )}
     </Background>
   );
 }
@@ -106,6 +82,12 @@ export default function Subscriptions() {
 Subscriptions.navigationOptions = {
   tabBarLabel: 'Inscrições',
   tabBarIcon: ({ tintColor }) => (
-    <Icon name="link" size={30} color={tintColor} />
+    <Icon name="local-offer" size={30} color={tintColor} />
   ),
 };
+
+Subscriptions.propTypes = {
+  isFocused: PropTypes.bool.isRequired,
+};
+
+export default withNavigationFocus(Subscriptions);

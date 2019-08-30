@@ -8,7 +8,7 @@ if (__DEV__) {
     .use(reactotronSaga())
     .connect();
 
-  // tron.clear();
+  tron.clear();
 
   console.tron = tron;
 }
