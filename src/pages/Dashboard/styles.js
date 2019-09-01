@@ -20,7 +20,7 @@ export const DateText = styled.Text`
 `;
 
 export const List = styled.FlatList.attrs({
-  showsVerticalScrollIndicator: false,
+  showsVerticalScrollIndicator: true,
   contentContainerStyle: { padding: 15 },
 })``;
 

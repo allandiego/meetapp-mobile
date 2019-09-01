@@ -25,7 +25,6 @@ export default function Meetup({ data, onButtonClick }) {
   return (
     <Container past={data.past}>
       <Header>
-        {/* resizeMode="cover | contain" */}
         <BannerImage source={{ uri: data.file.url }} />
       </Header>
 

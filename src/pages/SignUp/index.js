@@ -68,6 +68,7 @@ export default function SignUp({ navigation }) {
             placeholder="Sua senha secreta"
             icon="lock-outline"
             blurOnSubmit={false}
+            autoCapitalize="none"
             secureTextEntry
             ref={passwordRef}
             returnKeyType="send"

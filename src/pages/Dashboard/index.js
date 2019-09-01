@@ -32,7 +32,7 @@ function Dashboard({ isFocused }) {
 
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [isListEnd, setIsListEnd] = useState(false);
 
   const dateFormatted = useMemo(
@@ -41,26 +41,24 @@ function Dashboard({ isFocused }) {
   );
 
   async function loadMeetups(selectedPage = 1) {
-    // console.tron.log(
-    //   `loadMeetups: selectedPage ${selectedPage} - date: ${date} - isListEnd ${isListEnd}`
-    // );
-
-    if (selectedPage > 1 && isListEnd) return;
-
     try {
+      if (selectedPage > 1 && isListEnd) return;
+
+      setLoading(true);
       const response = await api.get('meetups', {
         params: {
           date,
           page: selectedPage,
+          per_page: 2,
         },
       });
 
-      if (response.data.length === 0) {
-        setIsListEnd(true);
-      }
-
       const data =
-        selectedPage > 1 ? [...meetups, ...response.data] : response.data;
+        selectedPage > 1
+          ? [...meetups, ...response.data.rows]
+          : response.data.rows;
+
+      setIsListEnd(selectedPage >= response.data.total_pages);
 
       setPage(selectedPage);
       setMeetups(data);
@@ -72,18 +70,17 @@ function Dashboard({ isFocused }) {
 
   useEffect(() => {
     if (isFocused) {
-      setLoading(true);
-      setRefreshing(true);
       loadMeetups();
-      setRefreshing(false);
     }
   }, [isFocused, date]); // eslint-disable-line
 
   function handlePrevDay() {
+    setIsListEnd(false);
     setDate(subDays(date, 1));
   }
 
   function handleNextDay() {
+    setIsListEnd(false);
     setDate(addDays(date, 1));
   }
 
@@ -112,7 +109,8 @@ function Dashboard({ isFocused }) {
   }
 
   function renderListFooter() {
-    return loading && <Loading />;
+    if (!loading) return null;
+    return <Loading />;
   }
 
   function renderListEmpty() {
@@ -139,16 +137,15 @@ function Dashboard({ isFocused }) {
           </TouchableOpacity>
         </DateNav>
 
-        {/* {loading && <Loading size="large" />} */}
         {!loading && (
           <>
             <List
               data={meetups}
-              keyExtractor={item => String(item.id)}
               renderItem={renderItem}
+              keyExtractor={item => String(item.id)}
               refreshing={refreshing}
               onRefresh={handleRefresh}
-              onEndReachedThreshold={0.01}
+              onEndReachedThreshold={0.1}
               onEndReached={() => loadMeetups(page + 1)}
               ListFooterComponent={renderListFooter}
               ListEmptyComponent={renderListEmpty}
